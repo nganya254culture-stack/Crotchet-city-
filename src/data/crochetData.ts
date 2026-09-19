@@ -8,15 +8,17 @@ export const STUDIO_INFO = {
   ownerTitle: 'Master Loctician & Pioneer of Pain-Free Needle Crochet',
   ownerShortBio: 'Renowned as East Africa’s dreadlock virtuoso, P The dread genius transformed loc care by banishing sticky waxes, burning gels, and dirty residue. Using precision micro-crochet needles (0.5mm - 0.75mm), he sculpts dense, neat, feather-light locs that hold firm through workouts, showers, and months of growth.',
   address: 'Woodvale Grove, Sound Plaza 3rd Floor, Westlands, Nairobi, Kenya',
-  phone: '+254 712 345 678',
-  mpesaNumber: '0712 345 678',
+  phone: '+254 748 805 190',
+  mpesaNumber: '0748805190',
+  ownerMpesa: '0748805190',
+  founderMpesa: '0115540711',
   mpesaTill: '894210',
   mpesaPaybill: '522522',
   mpesaAccount: 'CROCHETCITY',
   hours: 'Mon – Sat: 7:30 AM – 8:30 PM | Sun: 9:00 AM – 6:00 PM',
   instagram: '@crochetcity_dreadgenius',
   tiktok: '@p_thedreadgenius',
-  whatsapp: '+254712345678',
+  whatsapp: '+254748805190',
   stats: {
     happyClients: '9,400+',
     yearsMastery: '14 Years',
@@ -24,6 +26,43 @@ export const STUDIO_INFO = {
     waxUsed: '0% (Always Pure & Organic)',
   }
 };
+
+export const COMMISSION_CONFIG = {
+  enabled: true,
+  ownerName: 'P The dread genius (Crochet City Owner)',
+  ownerMpesa: '0748805190',
+  ownerPercent: 90, // 90% goes directly to salon owner / locticians
+  founderName: 'Platform Creator & Technology Founder',
+  founderMpesa: '0115540711',
+  founderPercent: 10, // 10% platform founder commission
+  darajaMethod: 'Safaricom B2C Split & Instant LNMO',
+  description: 'Automated 90/10 split on every booking & transaction via Safaricom Daraja API'
+};
+
+export function calculateCommissionSplit(totalAmount: number): {
+  totalAmountKsh: number;
+  ownerAmountKsh: number;
+  ownerPercent: number;
+  ownerPhone: string;
+  founderAmountKsh: number;
+  founderPercent: number;
+  founderPhone: string;
+  splitDescription: string;
+} {
+  const safeTotal = Math.max(0, totalAmount);
+  const founderAmount = Math.round(safeTotal * (COMMISSION_CONFIG.founderPercent / 100));
+  const ownerAmount = safeTotal - founderAmount;
+  return {
+    totalAmountKsh: safeTotal,
+    ownerAmountKsh: ownerAmount,
+    ownerPercent: COMMISSION_CONFIG.ownerPercent,
+    ownerPhone: COMMISSION_CONFIG.ownerMpesa,
+    founderAmountKsh: founderAmount,
+    founderPercent: COMMISSION_CONFIG.founderPercent,
+    founderPhone: COMMISSION_CONFIG.founderMpesa,
+    splitDescription: `${COMMISSION_CONFIG.ownerPercent}% to Owner (${COMMISSION_CONFIG.ownerMpesa}) + ${COMMISSION_CONFIG.founderPercent}% to Founder (${COMMISSION_CONFIG.founderMpesa})`
+  };
+}
 
 export const EMPLOYEES: Employee[] = [
   {
@@ -234,43 +273,265 @@ export const SERVICES: ServiceItem[] = [
 
 export const TRANSFORMATIONS: TransformationItem[] = [
   {
-    id: 'trans-1',
-    title: 'From 6 Months Overgrown Fuzz to Military Neat Locs',
-    clientName: 'Kevin M., Nairobi CBD',
-    service: 'Instant Needle Crochet Retwist & Interlock',
+    id: 'trans-shake-test',
+    title: 'The Master P "Shake-Test" Transformation',
+    clientName: 'Junior & Parent, Nairobi',
+    service: 'Instant Needle Crochet Retwist & Root Alignment',
     loctician: 'P The dread genius',
-    duration: '2 hrs 10 mins',
-    beforeDescription: 'Heavy root fuzz, wild flyaways, previous salon used wax leaving brown residue and unraveling roots.',
-    afterDescription: 'Clean cylinder locs, all stray hairs crocheted inside the core, razor-neat square grid parting with pure jojoba shine.',
-    beforeImg: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=600&q=80',
-    afterImg: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80',
-    neatnessKeyFactors: ['100% Wax-free micro needle', 'Sharp square scalp grid', 'Zero flyaways along the shaft', 'Scalp tension free']
+    duration: '1 hr 45 mins',
+    beforeDescription: 'Unkept 3+ months root regrowth, messy flyaway halo, lost grid definition, and loose stray hairs around the hairline.',
+    afterDescription: 'Flawless square grid scalp rows, each loc consolidated with a 0.5mm micro-needle, 100% wax-free, passing the dynamic "Loc Shake Test" immediately without tension or pain.',
+    beforeImg: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=800&q=80',
+    afterImg: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
+    neatnessKeyFactors: [
+      'Painless 0.5mm micro-needle interlocking',
+      'Sharp geometric scalp grid (zero loose fuzz)',
+      'Dynamic Shake Test passed: 100% flexible & lightweight',
+      'Zero wax, zero sticky residues, zero burning gels'
+    ],
+    shakeTestPassed: true,
+    videoTitle: 'Live Video: "Shake Tena!" - Full Mobility Shake Test',
+    videoCaption: 'Watch the young client vigorously shaking their head immediately after the needle crochet session. The locs bounce freely with zero scalp pull or stiffness.',
+    beforeTraits: [
+      'Overgrown fuzzy roots merging between locs',
+      'Scalp lines completely obscured by loose new growth',
+      'Frayed loc shaft with stray hair halo'
+    ],
+    afterTraits: [
+      'Defined rectangular & diamond scalp channels',
+      'Solid, compact cylindrical loc shaft',
+      'Immediate pain-free movement & bouncy flexibility'
+    ]
   },
   {
-    id: 'trans-2',
-    title: 'Severe Thinning Crown Reconstructed & Joined',
-    clientName: 'Wairimu K., Westlands',
-    service: 'Loc Reconstruction & Micro-Welding',
-    loctician: 'Brian Ochieng (B-Locs)',
+    id: 'trans-outdoor-mature',
+    title: 'Scenic Hillside Sculpting: Thick Mature Locs Restored',
+    clientName: 'David K., Nairobi Outskirts',
+    service: 'Heavy Mature Locs Re-interlocking & Root Reconstruction',
+    loctician: 'P The dread genius',
+    duration: '2 hrs 30 mins',
+    beforeDescription: 'Dense, mature thick locs with 4+ months of heavy unparted root matting, uneven base distribution, and wild loose flyaways.',
+    afterDescription: 'Sculpted root architecture standing firm from the scalp in open sunlight, razor-neat square blocks, pristine sheen with botanical oils.',
+    beforeImg: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
+    afterImg: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80',
+    neatnessKeyFactors: [
+      'Root-to-tip micro-crochet reinforcement',
+      'Even weight redistribution preventing follicle pull',
+      'High-definition outdoor sunlight clarity',
+      '100% Pure organic jojoba & tea tree finish'
+    ],
+    shakeTestPassed: true,
+    videoTitle: 'Live Video: Master P Sculpting Mature Locs in Nature',
+    videoCaption: 'Master P demonstrates rapid-fire needle technique on heavy mature dreadlocks outdoors. Each root is sculpted into an architectural column.',
+    beforeTraits: [
+      'Thick matted roots collapsing into one another',
+      'Loss of scalp boundary definition',
+      'Bulbous, irregular shaft thickness'
+    ],
+    afterTraits: [
+      'Sculpted roots standing firm from follicle base',
+      'Crisp geometric boundary per dreadlock',
+      'Glossy, breathable, wax-free natural luster'
+    ]
+  },
+  {
+    id: 'trans-pink-towel-crown',
+    title: 'Royal Crown Diamond-Grid Micro-Welding',
+    clientName: 'Faith W., Westlands',
+    service: 'Sisterlocks & Precision Geometric Scalp Interlock',
+    loctician: 'P The dread genius',
+    duration: '2 hrs 15 mins',
+    beforeDescription: 'Unkept, fuzzy crown roots with stray hairs straying across neighboring parts, causing fuzziness and friction.',
+    afterDescription: 'Masterpiece scalp symmetry: diamond grid partings, 100% of stray hairs tucked into the loc core, completely clean scalp paths.',
+    beforeImg: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80',
+    afterImg: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80',
+    neatnessKeyFactors: [
+      'Micro-welding needle technique',
+      'Symmetrical diamond scalp grid parting',
+      'Clean follicle pathways allowing air circulation',
+      'Zero scalp pulling or migraine-inducing tightness'
+    ],
+    shakeTestPassed: true,
+    videoTitle: 'Live Video: Crown Symmetry & Diamond Grid Inspection',
+    videoCaption: 'A close-up 360-degree scalp walkthrough revealing how every loc emerges from an immaculate geometric base without stray hairs.',
+    beforeTraits: [
+      'Scalp fuzz creating messy cloudy crown',
+      'Roots merging and tangling at the base',
+      'Weakening hair shaft from lack of compaction'
+    ],
+    afterTraits: [
+      'Immaculate diamond grid parting visible from all angles',
+      '100% compact cylindrical dread core',
+      'Zero wax residue: scalp breathes freely'
+    ]
+  },
+  {
+    id: 'trans-emergency-repair',
+    title: 'Thinning Root Rescue & Loc Shaft Reconstruction',
+    clientName: 'Brian M., Kilimani',
+    service: 'Loc Reconstruction & Snapping Root Repair',
+    loctician: 'P The dread genius',
     duration: '2 hrs 45 mins',
-    beforeDescription: 'Crown locs hanging by literal 4-strand threads due to tight ponytails and bad interlocking elsewhere.',
-    afterDescription: 'Fully reinforced roots, blended with 100% human afro hair, thick solid base, totally undetectable join.',
-    beforeImg: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
-    afterImg: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80',
-    neatnessKeyFactors: ['Human hair micro-weft reinforcement', 'Weight re-distribution', 'Uniform loc circumference', 'Clean scalp wash']
+    beforeDescription: 'Three heavy locs dangling on 3–4 fragile hair strands due to prior over-twisting with harsh chemical gel.',
+    afterDescription: 'Reinforced internally using 100% human afro hair and micro-crochet mesh. Thick, resilient root base perfectly matched in color and density.',
+    beforeImg: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80',
+    afterImg: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80',
+    neatnessKeyFactors: [
+      'Seamless structural core reinforcement',
+      'Weight-bearing root distribution',
+      'Zero glue or artificial threads',
+      'Permanent strength under tension'
+    ],
+    shakeTestPassed: true,
+    videoTitle: 'Live Video: Micro-Needle Root Reconstruction in Action',
+    videoCaption: 'Watch P surgically reconstruct a snapping dreadlock with zero glue or threads, restoring full weight-bearing capacity.',
+    beforeTraits: [
+      'Snapping roots hanging by thin strands',
+      'Holes and weak spots along the loc cylinder',
+      'Painful uneven scalp weight'
+    ],
+    afterTraits: [
+      'Reinforced uniform root thickness',
+      'Smooth cylindrical core with matching density',
+      '100% permanent load-bearing strength'
+    ]
   },
   {
-    id: 'trans-3',
-    title: 'Deep ACV Detox: 4 Years of Embedded Wax Extracted',
-    clientName: 'Emmanuel O., Kilimani',
-    service: 'Royal ACV & Herbal Deep Cleanse + Crochet Polish',
-    loctician: 'Zahra Mwangi & Ras Keffa',
-    duration: '3 hours',
-    beforeDescription: 'Heavy grey-tinted locs weighed down with old styling wax, scalp itching, chronic lint traps.',
-    afterDescription: 'Locs dropped 300g in water weight, midnight black luster restored, fresh eucalyptus aroma, smooth cylindrical finish.',
-    beforeImg: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80',
-    afterImg: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80',
-    neatnessKeyFactors: ['3-stage bubbling ACV bath', 'Gentle ultrasonic lint squeegee', 'Peppermint rosemary infusion', 'Crochet flyaway tuck']
+    id: 'trans-instant-starter',
+    title: 'Day-One Instant Mature Starter Locs (From Loose Afro)',
+    clientName: 'Kevin O., Nairobi CBD',
+    service: 'Instant Needle Starter Locs',
+    loctician: 'P The dread genius',
+    duration: '4 hrs 30 mins',
+    beforeDescription: '4 inches of loose natural 4C afro hair prone to daily tangling and uneven growth.',
+    afterDescription: 'Full crown of instant cylindrical mature dreadlocks with immaculate bricklayer scalp grids. 100% water-ready on day one.',
+    beforeImg: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=800&q=80',
+    afterImg: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=800&q=80',
+    neatnessKeyFactors: [
+      'Zero awkward unfurling or unravelling stage',
+      'Instant wash & shower safety',
+      'Crisp brick-pattern scalp channels',
+      'Consistent diameter from root to tip'
+    ],
+    shakeTestPassed: true,
+    videoTitle: 'Live Video: Day-One Instant Starter Locs Shower Test',
+    videoCaption: 'Proving needle starter locs can be washed immediately without unraveling into loose hair.',
+    beforeTraits: [
+      'Loose unstructured afro hair',
+      'Daily comb manipulation breakage',
+      'No loc definition'
+    ],
+    afterTraits: [
+      'Firm mature cylindrical dreadlocks on day one',
+      'Even bricklayer parting grid',
+      'Washable and gym-ready immediately'
+    ]
+  }
+];
+
+export const NEATNESS_CRITERIA = {
+  title: 'How to Know: Before (Unkept) vs After (Neat & Kept)',
+  subtitle: 'The Anatomy of True Craftsmanship by P The Dread Genius',
+  categories: [
+    {
+      id: 'scalp-parting',
+      title: '1. Scalp Parting & Root Grid',
+      beforeLabel: 'BEFORE (Unkept)',
+      beforeDescription: 'Parting lines have vanished under overgrown fuzz. New hair growth weaves across adjacent locs (inter-loc webbing), causing uneven tension and tangles.',
+      afterLabel: 'AFTER (Neat & Kept)',
+      afterDescription: 'Sharp, visible geometric grids (Square, Diamond, or Brick). Every single loc possesses its own dedicated scalp territory, allowing healthy follicle circulation.',
+      icon: 'Grid'
+    },
+    {
+      id: 'loc-shaft',
+      title: '2. Loc Shaft & The "Halo" Effect',
+      beforeLabel: 'BEFORE (Unkept)',
+      beforeDescription: 'A cloudy, frizzy halo of loose hairs surrounds each dreadlock. Shafts feel spongy, with irregular bumps, thinning sections, or uncontained coils.',
+      afterLabel: 'AFTER (Neat & Kept)',
+      afterDescription: 'Smooth, uniform cylindrical density. 100% of loose fibers are woven into the internal core with a 0.5mm needle—not glued down or shellacked.',
+      icon: 'Scissors'
+    },
+    {
+      id: 'residue-test',
+      title: '3. The Cleanliness & Residue Test',
+      beforeLabel: 'BEFORE (Unkept)',
+      beforeDescription: 'Sticky, waxy feel from heavy salon beeswax or black gel. Traps grey lint, city dust, and turns white or smells musty when damp.',
+      afterLabel: 'AFTER (Neat & Kept)',
+      afterDescription: 'Zero wax, zero gels, zero artificial binders. Hydrated exclusively with organic rosewater and botanical oils. Feather-light and fresh.',
+      icon: 'Sparkles'
+    },
+    {
+      id: 'shake-test',
+      title: '4. The Dynamic "Loc Shake Test"',
+      beforeLabel: 'BEFORE (Unkept)',
+      beforeDescription: 'Stiff or painful pulling caused by overtight twisting, or conversely loose and unraveling the moment it touches water or workouts.',
+      afterLabel: 'AFTER (Neat & Kept)',
+      afterDescription: 'Instant pain-free mobility! The client can shake their head vigorously immediately after the appointment—firm, locked, yet bouncy and light.',
+      icon: 'RefreshCw'
+    }
+  ]
+};
+
+export const FEATURED_VIDEOS = [
+  {
+    id: 'vid-shake-test',
+    title: 'The Legendary Loc Shake Test ("Shake Tena!")',
+    tag: 'Dynamic Motion Proof',
+    duration: '0:45',
+    loctician: 'P The dread genius',
+    description: 'Watch the young client shake their newly crocheted dreadlocks with full joyful freedom. Proves needle crochet provides instant lightness with zero headache or scalp pulling.',
+    badge: '100% Pain-Free',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-shaking-her-curly-hair-41444-large.mp4'
+  },
+  {
+    id: 'vid-needle-speed',
+    title: 'Master P High-Speed Micro-Crochet (0.5mm Needle)',
+    tag: 'Artisan Technique',
+    duration: '1:15',
+    loctician: 'P The dread genius',
+    description: 'Close-up camera work capturing the surgical hand motion of Master P interlocking root flyaways in seconds, turning messy fuzz into tight royal cylinders.',
+    badge: 'Zero Wax',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-african-american-man-posing-outdoors-42289-large.mp4'
+  },
+  {
+    id: 'vid-outdoor-sculpting',
+    title: 'Scenic Kenya Hillside: Restoring Heavy Mature Locs',
+    tag: 'Loc Architecture',
+    duration: '1:30',
+    loctician: 'P The dread genius',
+    description: 'Outdoor loc session in natural sunlight. Master P sculpts dense, mature dreadlocks into clean, upright columns that stay firm through any weather.',
+    badge: 'Crown Mastery',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-man-dancing-under-the-sun-41372-large.mp4'
+  },
+  {
+    id: 'vid-starter-locs',
+    title: 'Instant Needle Starter Locs Day One Proof',
+    tag: 'Instant Locking',
+    duration: '1:05',
+    loctician: 'P The dread genius',
+    description: 'Demonstrating how 4C afro hair is locked instantly with the micro-needle. Clean partings and solid cylindrical cylinders ready for immediate washing.',
+    badge: 'Instant Results',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-man-with-afro-hair-smiling-41480-large.mp4'
+  },
+  {
+    id: 'vid-diamond-grid',
+    title: 'Diamond Scalp Grid 360° Inspection',
+    tag: 'Grid Precision',
+    duration: '0:50',
+    loctician: 'P The dread genius',
+    description: 'A 360-degree panoramic camera sweep of the scalp showing razor-sharp diamond partings with every root standing free and neat.',
+    badge: 'Razor-Neat Parting',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-young-woman-posing-with-curls-41443-large.mp4'
+  },
+  {
+    id: 'vid-acv-detox',
+    title: 'Organic Apple Cider Vinegar & Herbal Detox Bubbles',
+    tag: 'Deep Cleanse',
+    duration: '1:20',
+    loctician: 'Amina & P',
+    description: 'Deep fizzing ACV and baking soda soak releasing years of trapped white salon wax and lint, leaving dreadlocks 40% lighter.',
+    badge: 'Lint-Free Locs',
+    videoUrl: 'https://assets.mixkit.co/videos/preview/mixkit-water-bubbles-rising-in-slow-motion-41352-large.mp4'
   }
 ];
 

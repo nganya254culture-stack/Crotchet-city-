@@ -6,7 +6,7 @@ import { BackToTopBar } from './BackToTopBar';
 
 export const CareGuide: React.FC = () => {
   return (
-    <section id="care-section" className="py-16 sm:py-24 bg-[#0d130f] relative border-t border-[#1c291f]">
+    <section className="py-8 sm:py-14 bg-transparent relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back to Index Navigation Breadcrumb Bar */}
         <SectionBackToIndex sectionTitle="The Neat Locs Care Guide" categoryBadge="Philosophy & Maintenance" />

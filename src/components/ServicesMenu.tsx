@@ -29,7 +29,7 @@ export const ServicesMenu: React.FC<ServicesMenuProps> = ({ onSelectService }) =
   ];
 
   return (
-    <section id="services-section" className="py-16 sm:py-24 bg-[#0d130f]/80 backdrop-blur-[2px] relative border-b border-[#182a1d]/60">
+    <section className="py-8 sm:py-14 bg-transparent relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back to Index Navigation Breadcrumb Bar */}
         <SectionBackToIndex sectionTitle="Services & Pricing Menu" categoryBadge="Transparent Rates" />
@@ -172,7 +172,7 @@ export const ServicesMenu: React.FC<ServicesMenuProps> = ({ onSelectService }) =
                   <button
                     id={`book-service-${service.id}`}
                     onClick={() => onSelectService(service)}
-                    className="px-3.5 py-2 rounded-lg bg-[#19271d] hover:bg-amber-500 hover:text-stone-950 text-amber-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border border-[#2b4131] active:scale-95 shadow-sm"
+                    className="px-3.5 py-2 rounded-lg bg-[#19271d] hover:bg-amber-500 hover:text-stone-950 text-amber-300 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer border border-[#2b4131] active:scale-95 shadow-sm rasta-btn-glow"
                   >
                     <span>Book</span>
                     <ArrowRight className="w-3.5 h-3.5" />

@@ -11,7 +11,7 @@ interface LocationAndContactProps {
 
 export const LocationAndContact: React.FC<LocationAndContactProps> = ({ onOpenMpesa, onOpenBooking }) => {
   return (
-    <section id="location-section" className="py-16 sm:py-24 bg-[#0a0f0c] relative">
+    <section className="py-8 sm:py-14 bg-transparent relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back to Index Navigation Breadcrumb Bar */}
         <SectionBackToIndex sectionTitle="Location & Studio Hours" categoryBadge="Find & Visit Us" />
@@ -93,7 +93,7 @@ export const LocationAndContact: React.FC<LocationAndContactProps> = ({ onOpenMp
               <a
                 id="contact-call-btn"
                 href={`tel:${STUDIO_INFO.phone.replace(/ /g, '')}`}
-                className="px-5 py-3 rounded-xl bg-[#152319] hover:bg-[#1d3023] border border-[#273d2d] text-white text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 transition-colors cursor-pointer"
+                className="px-5 py-3 rounded-xl bg-[#152319] hover:bg-[#1d3023] border border-[#273d2d] text-white text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 transition-colors cursor-pointer rasta-btn-glow"
               >
                 <Phone className="w-4 h-4 text-emerald-400" />
                 <span>Call Studio: {STUDIO_INFO.phone}</span>
@@ -104,7 +104,7 @@ export const LocationAndContact: React.FC<LocationAndContactProps> = ({ onOpenMp
                 href={`https://wa.me/${STUDIO_INFO.whatsapp}?text=${encodeURIComponent("Jambo P The dread genius! I'd like to inquire about booking a crochet dreadlock appointment at Crochet City.")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-3 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/60 text-emerald-300 text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 transition-colors cursor-pointer"
+                className="px-5 py-3 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/60 text-emerald-300 text-xs font-extrabold uppercase tracking-wider flex items-center gap-2 transition-colors cursor-pointer rasta-btn-glow"
               >
                 <MessageSquare className="w-4 h-4 text-[#25D366]" />
                 <span>WhatsApp The Genius</span>
@@ -148,7 +148,7 @@ export const LocationAndContact: React.FC<LocationAndContactProps> = ({ onOpenMp
                 <button
                   id="contact-open-mpesa-btn"
                   onClick={onOpenMpesa}
-                  className="w-full py-2.5 rounded-lg bg-[#008751]/30 hover:bg-[#008751]/50 border border-[#008751] text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer"
+                  className="w-full py-2.5 rounded-lg bg-[#008751]/30 hover:bg-[#008751]/50 border border-[#008751] text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer rasta-btn-glow"
                 >
                   <CreditCard className="w-3.5 h-3.5" />
                   <span>Open Interactive M-Pesa Terminal</span>
@@ -159,7 +159,7 @@ export const LocationAndContact: React.FC<LocationAndContactProps> = ({ onOpenMp
               <button
                 id="contact-book-chair-btn"
                 onClick={onOpenBooking}
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer transition-all active:scale-95"
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer transition-all active:scale-95 rasta-btn-glow"
               >
                 <span>Book Appointment With P</span>
               </button>

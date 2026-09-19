@@ -83,7 +83,7 @@ export const LocDiagnosisQuiz: React.FC<LocDiagnosisQuizProps> = ({ onBookServic
   const prescription = getPrescription();
 
   return (
-    <section id="diagnosis-tool" className="py-16 sm:py-20 bg-gradient-to-b from-[#0b0f0c] via-[#0d1610] to-[#0a0e0c] relative border-t border-[#1a281e]">
+    <section className="py-8 sm:py-14 bg-transparent relative">
       {/* Background ambient lighting */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-5xl h-96 bg-gradient-to-r from-emerald-600/10 via-amber-500/10 to-red-600/10 blur-[130px] pointer-events-none" />
 
@@ -257,7 +257,7 @@ export const LocDiagnosisQuiz: React.FC<LocDiagnosisQuizProps> = ({ onBookServic
                 <button
                   id="book-quiz-prescription-btn"
                   onClick={() => onBookService(prescription.service.id, prescription.loctician.id)}
-                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer transition-all active:scale-95"
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs font-bold flex items-center justify-center gap-2 shadow-sm cursor-pointer transition-all active:scale-95 rasta-btn-glow"
                 >
                   <Scissors className="w-3.5 h-3.5 text-stone-950" />
                   <span>Book This Prescription</span>
@@ -265,12 +265,13 @@ export const LocDiagnosisQuiz: React.FC<LocDiagnosisQuizProps> = ({ onBookServic
                 </button>
 
                 <a
+                  id="quiz-whatsapp-share-btn"
                   href={`https://wa.me/${STUDIO_INFO.whatsapp}?text=${encodeURIComponent(
                     `Jambo P! I just used the Crochet City diagnostic quiz. My diagnosis is: ${prescription.diagnosisTitle} (est. KSh ${prescription.service.priceKsh}). Can I send photos of my hair to confirm?`
                   )}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-2 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/50 text-emerald-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  className="w-full py-2 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366]/30 border border-[#25D366]/50 text-emerald-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer rasta-btn-glow"
                 >
                   <MessageSquare className="w-3.5 h-3.5" />
                   <span>Send Diagnosis to WhatsApp</span>

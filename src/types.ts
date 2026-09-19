@@ -59,6 +59,23 @@ export interface TransformationItem {
   beforeImg: string;
   afterImg: string;
   neatnessKeyFactors: string[];
+  videoUrl?: string;
+  videoTitle?: string;
+  videoCaption?: string;
+  shakeTestPassed?: boolean;
+  beforeTraits?: string[];
+  afterTraits?: string[];
+}
+
+export interface CommissionSplit {
+  totalAmountKsh: number;
+  ownerAmountKsh: number;
+  ownerPercent: number;
+  ownerPhone: string;
+  founderAmountKsh: number;
+  founderPercent: number;
+  founderPhone: string;
+  splitDescription: string;
 }
 
 export interface BookingRequest {

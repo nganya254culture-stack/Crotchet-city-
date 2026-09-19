@@ -1,9 +1,11 @@
-import React from 'react';
-import { Award, Star, CheckCircle, Scissors, Calendar, Sparkles, Instagram, Clock, ShieldCheck, Heart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Award, Star, CheckCircle, Scissors, Calendar, Sparkles, Instagram, Clock, ShieldCheck, Heart, Camera } from 'lucide-react';
 import { EMPLOYEES, STUDIO_INFO } from '../data/crochetData';
 import { Employee } from '../types';
 import { BackToTopBar } from './BackToTopBar';
 import { SectionBackToIndex } from './SectionBackToIndex';
+import { getEffectivePhoto, loadAllPhotoOverridesAsync } from '../data/mediaGallery';
+import { ReplacePhotoModal } from './ReplacePhotoModal';
 
 interface TeamSectionProps {
   onSelectLoctician: (employee: Employee) => void;
@@ -12,9 +14,45 @@ interface TeamSectionProps {
 export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectLoctician }) => {
   const owner = EMPLOYEES.find((emp) => emp.isOwner) || EMPLOYEES[0];
   const staff = EMPLOYEES.filter((emp) => !emp.isOwner);
+  const [, setRefresh] = useState(0);
+
+  // Photo replacement modal state
+  const [replaceModal, setReplaceModal] = useState<{
+    isOpen: boolean;
+    photoKey: string;
+    currentPhotoUrl: string;
+    originalDefaultUrl?: string;
+    photoTitle?: string;
+  }>({
+    isOpen: false,
+    photoKey: '',
+    currentPhotoUrl: '',
+  });
+
+  useEffect(() => {
+    loadAllPhotoOverridesAsync().then(() => {
+      setRefresh(v => v + 1);
+    });
+
+    const handlePhotoReplaced = () => setRefresh(v => v + 1);
+    window.addEventListener('crochet-photo-replaced', handlePhotoReplaced);
+    return () => window.removeEventListener('crochet-photo-replaced', handlePhotoReplaced);
+  }, []);
+
+  const handleOpenReplace = (photoKey: string, currentUrl: string, originalUrl?: string, title?: string) => {
+    setReplaceModal({
+      isOpen: true,
+      photoKey,
+      currentPhotoUrl: currentUrl,
+      originalDefaultUrl: originalUrl || currentUrl,
+      photoTitle: title || 'Staff Member Photo',
+    });
+  };
+
+  const effectiveOwnerAvatar = getEffectivePhoto(owner.avatar, `team-owner-${owner.id}`);
 
   return (
-    <section id="team-section" className="py-16 sm:py-24 bg-[#0a0f0c]/75 backdrop-blur-[2px] relative border-b border-[#1b2b1f]/70">
+    <section className="py-8 sm:py-14 bg-transparent relative">
       {/* Background Rasta accent aura */}
       <div className="absolute top-1/3 left-0 w-96 h-96 bg-emerald-900/10 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-10 right-0 w-96 h-96 bg-amber-900/10 rounded-full blur-[140px] pointer-events-none" />
@@ -49,14 +87,26 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectLoctician }) =
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 {/* Left: Owner Portrait */}
                 <div className="lg:col-span-4 text-center sm:text-left">
-                  <div className="relative inline-block mx-auto lg:mx-0">
+                  <div className="relative inline-block mx-auto lg:mx-0 group">
                     <div className="w-48 h-48 sm:w-56 sm:h-56 rounded-2xl overflow-hidden ring-4 ring-amber-400/40 shadow-2xl relative">
                       <img
-                        src={owner.avatar}
+                        src={effectiveOwnerAvatar}
                         alt={owner.name}
                         className="w-full h-full object-cover object-center"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+                      
+                      {/* Replace photo quick button overlay */}
+                      <button
+                        type="button"
+                        onClick={() => handleOpenReplace(`team-owner-${owner.id}`, effectiveOwnerAvatar, owner.avatar, `${owner.name} (Founder Portrait)`)}
+                        className="absolute top-2 left-2 px-2.5 py-1 rounded-lg bg-black/80 hover:bg-amber-500 hover:text-stone-950 text-amber-300 border border-amber-500/50 text-[11px] font-bold transition-all flex items-center gap-1 shadow-md cursor-pointer backdrop-blur-sm"
+                        title="Replace Founder Photo"
+                      >
+                        <Camera className="w-3.5 h-3.5" />
+                        <span>Change Photo</span>
+                      </button>
+
                       <div className="absolute bottom-3 left-3 right-3 text-center">
                         <span className="px-3 py-1 rounded-full bg-amber-500 text-stone-950 text-[10px] font-black uppercase tracking-wider shadow-md">
                           FOUNDER & LEAD ARTISAN
@@ -132,7 +182,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectLoctician }) =
                     <button
                       id={`book-with-owner-btn`}
                       onClick={() => onSelectLoctician(owner)}
-                      className="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs font-bold flex items-center gap-2 shadow-sm cursor-pointer transition-all active:scale-95"
+                      className="px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 text-xs font-bold flex items-center gap-2 shadow-sm cursor-pointer transition-all active:scale-95 rasta-btn-glow"
                     >
                       <Calendar className="w-3.5 h-3.5" />
                       <span>Book Chair With P</span>
@@ -171,33 +221,45 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectLoctician }) =
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {staff.map((emp) => (
-              <div
-                key={emp.id}
-                className="rounded-2xl bg-[#0e1410] border border-[#1f2d22] hover:border-amber-500/40 p-5 space-y-4 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-950/20 flex flex-col justify-between group"
-              >
-                <div>
-                  {/* Top card banner */}
-                  <div className="flex items-start gap-4">
-                    <div className="relative">
-                      <img
-                        src={emp.avatar}
-                        alt={emp.name}
-                        className="w-16 h-16 rounded-xl object-cover ring-2 ring-[#223526] group-hover:ring-amber-400/60 transition-all"
-                      />
-                      {emp.availableToday && (
-                        <span 
-                          title="Available in salon today"
-                          className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[#0e1410] flex items-center justify-center"
+            {staff.map((emp) => {
+              const effectiveEmpAvatar = getEffectivePhoto(emp.avatar, `team-emp-${emp.id}`);
+              return (
+                <div
+                  key={emp.id}
+                  className="rounded-2xl bg-[#0e1410] border border-[#1f2d22] hover:border-amber-500/40 p-5 space-y-4 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-950/20 flex flex-col justify-between group"
+                >
+                  <div>
+                    {/* Top card banner */}
+                    <div className="flex items-start gap-4">
+                      <div className="relative group/avatar">
+                        <img
+                          src={effectiveEmpAvatar}
+                          alt={emp.name}
+                          className="w-16 h-16 rounded-xl object-cover ring-2 ring-[#223526] group-hover:ring-amber-400/60 transition-all"
                         />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <h4 className="text-base font-extrabold text-white truncate font-syne group-hover:text-amber-300 transition-colors">
-                          {emp.name}
-                        </h4>
+                        {/* Replace photo overlay button */}
+                        <button
+                          type="button"
+                          onClick={() => handleOpenReplace(`team-emp-${emp.id}`, effectiveEmpAvatar, emp.avatar, `${emp.name} (Loctician Avatar)`)}
+                          className="absolute -top-1.5 -left-1.5 w-6 h-6 rounded-full bg-black/90 hover:bg-amber-500 text-amber-300 hover:text-stone-950 border border-amber-500/50 flex items-center justify-center shadow transition-all cursor-pointer"
+                          title="Replace this loctician's photo"
+                        >
+                          <Camera className="w-3 h-3" />
+                        </button>
+
+                        {emp.availableToday && (
+                          <span 
+                            title="Available in salon today"
+                            className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[#0e1410] flex items-center justify-center"
+                          />
+                        )}
                       </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-base font-extrabold text-white truncate font-syne group-hover:text-amber-300 transition-colors">
+                            {emp.name}
+                          </h4>
+                        </div>
                       <p className="text-xs text-amber-400 font-semibold">{emp.title}</p>
                       <div className="flex items-center gap-2 mt-1 text-[11px] text-stone-400">
                         <span className="flex items-center text-amber-400">
@@ -250,19 +312,31 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ onSelectLoctician }) =
                   <button
                     id={`book-with-${emp.id}`}
                     onClick={() => onSelectLoctician(emp)}
-                    className="px-3.5 py-1.5 rounded-lg bg-[#19271c] hover:bg-amber-500 hover:text-stone-950 text-amber-300 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-[#263c2c]"
+                    className="px-3.5 py-1.5 rounded-lg bg-[#19271c] hover:bg-amber-500 hover:text-stone-950 text-amber-300 text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-[#263c2c] rasta-btn-glow"
                   >
                     <Calendar className="w-3.5 h-3.5" />
                     <span>Book With {emp.name.split(' ')[0]}</span>
                   </button>
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
+      </div>
 
-        {/* Effortless return to top menu */}
-        <BackToTopBar currentSectionName="P The Dread Genius & Staff" />
+      {/* Staff & Founder Photo Replace Modal */}
+      <ReplacePhotoModal
+        isOpen={replaceModal.isOpen}
+        onClose={() => setReplaceModal(prev => ({ ...prev, isOpen: false }))}
+        photoKey={replaceModal.photoKey}
+        currentPhotoUrl={replaceModal.currentPhotoUrl}
+        originalDefaultUrl={replaceModal.originalDefaultUrl}
+        photoTitle={replaceModal.photoTitle}
+        onPhotoReplaced={() => setRefresh(v => v + 1)}
+      />
+
+      {/* Effortless return to top menu */}
+      <BackToTopBar currentSectionName="P The Dread Genius & Staff" />
       </div>
     </section>
   );

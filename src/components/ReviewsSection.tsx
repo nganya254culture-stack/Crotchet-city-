@@ -59,7 +59,7 @@ export const ReviewsSection: React.FC = () => {
     : reviewsList.filter((r) => r.serviceType.toLowerCase().includes(selectedFilter.toLowerCase()) || r.rating.toString() === selectedFilter);
 
   return (
-    <section id="reviews-section" className="py-16 sm:py-24 bg-[#0a0f0c] relative">
+    <section className="py-8 sm:py-14 bg-transparent relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back to Index Navigation Breadcrumb Bar */}
         <SectionBackToIndex sectionTitle="Customer Reviews & Ratings" categoryBadge="Verified Clients" />

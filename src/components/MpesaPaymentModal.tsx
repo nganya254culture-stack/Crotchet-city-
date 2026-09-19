@@ -1,6 +1,21 @@
 import React, { useState } from 'react';
-import { X, Check, Copy, CreditCard, ShieldCheck, Smartphone, ArrowRight, Sparkles, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
-import { STUDIO_INFO } from '../data/crochetData';
+import { 
+  X, 
+  Check, 
+  Copy, 
+  CreditCard, 
+  ShieldCheck, 
+  Smartphone, 
+  ArrowRight, 
+  Sparkles, 
+  CheckCircle2, 
+  Clock, 
+  AlertCircle,
+  Split,
+  Terminal,
+  ExternalLink
+} from 'lucide-react';
+import { STUDIO_INFO, COMMISSION_CONFIG, calculateCommissionSplit } from '../data/crochetData';
 
 interface MpesaPaymentModalProps {
   isOpen: boolean;
@@ -17,8 +32,8 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
   defaultPurpose = 'Booking Deposit - Crochet City',
   onPaymentSuccess
 }) => {
-  const [activeTab, setActiveTab] = useState<'stk' | 'till' | 'verify'>('stk');
-  const [phoneNumber, setPhoneNumber] = useState('0712 345 678');
+  const [activeTab, setActiveTab] = useState<'stk' | 'commission' | 'till' | 'verify' | 'costs'>('stk');
+  const [phoneNumber, setPhoneNumber] = useState('0722 000 000');
   const [amount, setAmount] = useState<number>(defaultAmount);
   const [purpose, setPurpose] = useState(defaultPurpose);
   const [stkStatus, setStkStatus] = useState<'idle' | 'prompt_sent' | 'pin_entered' | 'confirmed' | 'failed'>('idle');
@@ -31,6 +46,8 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
   const [verifiedReceipt, setVerifiedReceipt] = useState<{ code: string; date: string; amount: number } | null>(null);
 
   if (!isOpen) return null;
+
+  const commissionSplit = calculateCommissionSplit(amount);
 
   const handleCopy = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
@@ -128,14 +145,14 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
         </div>
 
         {/* Navigation Tabs inside Modal */}
-        <div className="flex border-b border-[#1b2b1e] bg-[#0c130e]">
+        <div className="flex border-b border-[#1b2b1e] bg-[#0c130e] overflow-x-auto">
           <button
             id="mpesa-tab-stk"
             onClick={() => {
               setActiveTab('stk');
               setStkStatus('idle');
             }}
-            className={`flex-1 py-3 px-3 text-xs sm:text-sm font-bold transition-all border-b-2 cursor-pointer flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-3 px-3 text-xs sm:text-sm font-bold transition-all border-b-2 cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap ${
               activeTab === 'stk'
                 ? 'border-emerald-500 text-emerald-400 bg-[#121c15]'
                 : 'border-transparent text-stone-400 hover:text-stone-200'
@@ -145,21 +162,33 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
             <span>Instant STK Push</span>
           </button>
           <button
+            id="mpesa-tab-commission"
+            onClick={() => setActiveTab('commission')}
+            className={`flex-1 py-3 px-3 text-xs sm:text-sm font-bold transition-all border-b-2 cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap ${
+              activeTab === 'commission'
+                ? 'border-amber-500 text-amber-400 bg-[#161a12]'
+                : 'border-transparent text-stone-400 hover:text-amber-300'
+            }`}
+          >
+            <Split className="w-4 h-4 text-amber-400" />
+            <span>Founder Split (90/10)</span>
+          </button>
+          <button
             id="mpesa-tab-till"
             onClick={() => setActiveTab('till')}
-            className={`flex-1 py-3 px-3 text-xs sm:text-sm font-bold transition-all border-b-2 cursor-pointer flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-3 px-3 text-xs sm:text-sm font-bold transition-all border-b-2 cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap ${
               activeTab === 'till'
                 ? 'border-emerald-500 text-emerald-400 bg-[#121c15]'
                 : 'border-transparent text-stone-400 hover:text-stone-200'
             }`}
           >
             <CreditCard className="w-4 h-4" />
-            <span>Till / Paybill Info</span>
+            <span>Till / Numbers</span>
           </button>
           <button
             id="mpesa-tab-verify"
             onClick={() => setActiveTab('verify')}
-            className={`flex-1 py-3 px-3 text-xs sm:text-sm font-bold transition-all border-b-2 cursor-pointer flex items-center justify-center gap-1.5 ${
+            className={`flex-1 py-3 px-3 text-xs sm:text-sm font-bold transition-all border-b-2 cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap ${
               activeTab === 'verify'
                 ? 'border-emerald-500 text-emerald-400 bg-[#121c15]'
                 : 'border-transparent text-stone-400 hover:text-stone-200'
@@ -167,6 +196,18 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
           >
             <ShieldCheck className="w-4 h-4" />
             <span>Verify Code</span>
+          </button>
+          <button
+            id="mpesa-tab-costs"
+            onClick={() => setActiveTab('costs')}
+            className={`flex-1 py-3 px-3 text-xs sm:text-sm font-bold transition-all border-b-2 cursor-pointer flex items-center justify-center gap-1.5 whitespace-nowrap ${
+              activeTab === 'costs'
+                ? 'border-amber-400 text-amber-300 bg-[#171a10]'
+                : 'border-transparent text-amber-400 hover:text-amber-200'
+            }`}
+          >
+            <AlertCircle className="w-4 h-4 text-amber-400" />
+            <span>Registration & Costs FAQ</span>
           </button>
         </div>
 
@@ -215,6 +256,29 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
                     </div>
                   </div>
 
+                  {/* Live Split Transparency Pill */}
+                  <div className="p-3 rounded-xl bg-[#111a13] border border-[#213526] space-y-1.5 text-xs">
+                    <div className="flex items-center justify-between text-stone-300 font-bold">
+                      <span className="flex items-center gap-1 text-amber-300">
+                        <Split className="w-3.5 h-3.5 text-amber-400" />
+                        Automated Payout Split:
+                      </span>
+                      <span className="text-stone-400 font-mono text-[11px]">Total: KSh {commissionSplit.totalAmountKsh.toLocaleString()}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 text-[11px] pt-1">
+                      <div className="p-2 rounded-lg bg-[#0c140e] border border-emerald-900/60">
+                        <span className="text-stone-400 block text-[10px]">Owner ({COMMISSION_CONFIG.ownerMpesa}):</span>
+                        <strong className="text-emerald-400 font-bold">KSh {commissionSplit.ownerAmountKsh.toLocaleString()}</strong>
+                        <span className="text-stone-500 block text-[9px]">(90% salon revenue)</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-[#0c140e] border border-amber-900/60">
+                        <span className="text-stone-400 block text-[10px]">Founder ({COMMISSION_CONFIG.founderMpesa}):</span>
+                        <strong className="text-amber-400 font-bold">KSh {commissionSplit.founderAmountKsh.toLocaleString()}</strong>
+                        <span className="text-stone-500 block text-[9px]">(10% platform creator)</span>
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-stone-300 mb-1.5">
                       Safaricom M-Pesa Phone Number
@@ -250,7 +314,7 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
                   <button
                     type="submit"
                     id="submit-stk-push-btn"
-                    className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#008751] to-[#059669] hover:from-[#059669] hover:to-[#10b981] text-white font-extrabold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/60 cursor-pointer transition-all"
+                    className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#008751] to-[#059669] hover:from-[#059669] hover:to-[#10b981] text-white font-extrabold text-sm uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-emerald-950/60 cursor-pointer transition-all rasta-btn-glow"
                   >
                     <Smartphone className="w-4 h-4" />
                     <span>Send M-Pesa STK Push (KSh {amount.toLocaleString()})</span>
@@ -295,7 +359,7 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
                     <button
                       type="submit"
                       id="confirm-simulated-pin-btn"
-                      className="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider cursor-pointer"
+                      className="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold uppercase tracking-wider cursor-pointer rasta-btn-glow"
                     >
                       Authorize Payment
                     </button>
@@ -314,7 +378,7 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
                 <div className="py-12 text-center space-y-3">
                   <div className="w-12 h-12 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin mx-auto" />
                   <p className="text-sm font-bold text-white">Contacting Safaricom Gateway...</p>
-                  <p className="text-xs text-stone-400">Verifying transaction and booking slot</p>
+                  <p className="text-xs text-stone-400">Executing automated 90/10 split to {COMMISSION_CONFIG.ownerMpesa} & {COMMISSION_CONFIG.founderMpesa}</p>
                 </div>
               )}
 
@@ -326,7 +390,7 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
                       <Check className="w-6 h-6 stroke-[3]" />
                     </div>
                     <div>
-                      <h4 className="text-base font-extrabold text-white">Payment Confirmed!</h4>
+                      <h4 className="text-base font-extrabold text-white">Payment & Commission Confirmed!</h4>
                       <p className="text-xs text-emerald-400 font-semibold">
                         Receipt: <strong className="text-white">{generatedReceipt}</strong>
                       </p>
@@ -335,11 +399,14 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
 
                   {/* SMS Message Mock */}
                   <div className="p-4 rounded-xl bg-black/60 border border-[#1b2b1d] font-mono text-xs text-stone-300 leading-relaxed">
-                    <span className="text-amber-400 font-bold">{generatedReceipt}</span> Confirmed. Ksh {amount.toLocaleString()}.00 sent to <strong className="text-white">CROCHET CITY DREADLOCK STUDIO</strong> on {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}. Account: <strong className="text-emerald-400">{STUDIO_INFO.owner.toUpperCase()}</strong>.
+                    <span className="text-amber-400 font-bold">{generatedReceipt}</span> Confirmed. Ksh {amount.toLocaleString()}.00 sent to <strong className="text-white">CROCHET CITY DREADLOCK STUDIO</strong> on {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}.
+                    <div className="mt-2 pt-2 border-t border-stone-800 text-[11px] text-stone-400">
+                      Split Settled: Owner (0748805190) Ksh {commissionSplit.ownerAmountKsh.toLocaleString()} • Founder (0115540711) Ksh {commissionSplit.founderAmountKsh.toLocaleString()}.
+                    </div>
                   </div>
 
                   <p className="text-xs text-stone-300">
-                    Your appointment / transaction has been logged with <span className="text-amber-400 font-semibold">{STUDIO_INFO.owner}</span> and the team. An SMS notification has also been dispatched to your phone.
+                    Your appointment has been secured with <span className="text-amber-400 font-semibold">{STUDIO_INFO.owner}</span>. Both owner and founder accounts have received instant notification.
                   </p>
 
                   <div className="flex items-center gap-2 pt-1">
@@ -364,21 +431,155 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
             </div>
           )}
 
-          {/* TAB 2: MANUAL TILL / PAYBILL INSTRUCTIONS */}
+          {/* TAB 2: FOUNDER COMMISSION & ARCHITECTURE GUIDE */}
+          {activeTab === 'commission' && (
+            <div className="space-y-4 animate-in fade-in duration-150">
+              <div className="p-4 rounded-2xl bg-[#141b12] border border-amber-500/40 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                      <Split className="w-4 h-4" />
+                    </div>
+                    <h4 className="text-sm font-extrabold text-white">
+                      Founders Commission Architecture
+                    </h4>
+                  </div>
+                  <span className="text-[10px] uppercase font-mono font-bold px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-800">
+                    Split Ratio: 90% / 10%
+                  </span>
+                </div>
+
+                <p className="text-xs text-stone-300 leading-relaxed">
+                  Every transaction triggers an automatic split disbursement: 90% to the studio owner for hair craft and 10% to the technology creator for platform development and upkeep.
+                </p>
+
+                {/* The Two Destinations */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <div className="p-3 rounded-xl bg-[#0f1711] border border-emerald-800/60 space-y-1">
+                    <span className="text-[10px] font-black uppercase text-emerald-400 tracking-wider flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      Client (Salon Owner) - 90%
+                    </span>
+                    <h5 className="text-xs font-bold text-white">
+                      {COMMISSION_CONFIG.ownerName}
+                    </h5>
+                    <p className="text-sm font-mono font-bold text-amber-300">
+                      M-Pesa: {COMMISSION_CONFIG.ownerMpesa}
+                    </p>
+                    <p className="text-[10px] text-stone-400">
+                      Covers studio service delivery, loctician labor, organic oils, and workspace overhead.
+                    </p>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-[#19150e] border border-amber-700/60 space-y-1">
+                    <span className="text-[10px] font-black uppercase text-amber-400 tracking-wider flex items-center gap-1">
+                      <span className="w-2 h-2 rounded-full bg-amber-500" />
+                      Founder (Platform Creator) - 10%
+                    </span>
+                    <h5 className="text-xs font-bold text-white">
+                      {COMMISSION_CONFIG.founderName}
+                    </h5>
+                    <p className="text-sm font-mono font-bold text-amber-300">
+                      M-Pesa: {COMMISSION_CONFIG.founderMpesa}
+                    </p>
+                    <p className="text-[10px] text-stone-400">
+                      Covers software development, server hosting, Daraja API gateway, and live updates.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* What You Need to Make M-Pesa Work Live */}
+              <div className="p-4 rounded-2xl bg-[#0c140e] border border-[#213526] space-y-3">
+                <h5 className="text-xs font-extrabold uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+                  <Terminal className="w-4 h-4 text-emerald-400" />
+                  What You Need to Make M-Pesa Live with 0748805190 & 0115540711:
+                </h5>
+
+                <ul className="space-y-2 text-xs text-stone-300">
+                  <li className="flex items-start gap-2">
+                    <span className="w-5 h-5 rounded-full bg-emerald-950 text-emerald-400 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                      1
+                    </span>
+                    <div>
+                      <strong className="text-white">Safaricom Daraja Portal Account</strong>: Register at{' '}
+                      <span className="text-amber-400 font-mono">developer.safaricom.co.ke</span> with your Safaricom credentials and link either the business Till (<strong className="text-white">{STUDIO_INFO.mpesaTill}</strong>) or Paybill (<strong className="text-white">{STUDIO_INFO.mpesaPaybill}</strong>).
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-5 h-5 rounded-full bg-emerald-950 text-emerald-400 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                      2
+                    </span>
+                    <div>
+                      <strong className="text-white">Daraja B2C / Payout API Credentials</strong>:
+                      To automatically disburse the 10% to <span className="text-amber-300 font-mono">0115540711</span> and 90% to <span className="text-amber-300 font-mono">0748805190</span>, enable Safaricom Business-to-Customer (B2C) API or M-Pesa Split Settlement.
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-5 h-5 rounded-full bg-emerald-950 text-emerald-400 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                      3
+                    </span>
+                    <div>
+                      <strong className="text-white">API Keys Required</strong>:
+                      <code className="text-[10px] text-amber-300 bg-black/60 px-1 py-0.5 rounded ml-1">DARAJA_CONSUMER_KEY</code>,{' '}
+                      <code className="text-[10px] text-amber-300 bg-black/60 px-1 py-0.5 rounded">DARAJA_CONSUMER_SECRET</code>,{' '}
+                      <code className="text-[10px] text-amber-300 bg-black/60 px-1 py-0.5 rounded">DARAJA_PASSKEY</code>.
+                    </div>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="w-5 h-5 rounded-full bg-emerald-950 text-emerald-400 flex items-center justify-center font-bold text-[11px] shrink-0 mt-0.5">
+                      4
+                    </span>
+                    <div>
+                      <strong className="text-white">Instant Manual Fallback</strong>:
+                      Clients can also pay directly to Owner M-Pesa (<strong className="text-white">{STUDIO_INFO.ownerMpesa}</strong>) or Till (<strong className="text-white">{STUDIO_INFO.mpesaTill}</strong>), and the founder commission can be reconciled via the M-Pesa verification code.
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: MANUAL TILL / PAYBILL INSTRUCTIONS */}
           {activeTab === 'till' && (
             <div className="space-y-4">
+              {/* Direct Owner Phone Number */}
+              <div className="p-4 rounded-2xl bg-[#111c14] border border-[#223727] flex items-center justify-between gap-4">
+                <div>
+                  <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400">
+                    Client / Salon Owner Direct M-Pesa
+                  </span>
+                  <h4 className="text-sm font-extrabold text-white">Send Money / P The dread genius</h4>
+                  <p className="text-2xl font-black text-amber-400 tracking-wider mt-1 font-mono">
+                    {STUDIO_INFO.ownerMpesa}
+                  </p>
+                  <p className="text-[11px] text-stone-400 mt-0.5">
+                    Account: P The dread genius (Crochet City)
+                  </p>
+                </div>
+
+                <button
+                  id="copy-owner-phone-btn"
+                  onClick={() => handleCopy(STUDIO_INFO.ownerMpesa, 'ownerPhone')}
+                  className="px-4 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500 hover:text-stone-950 text-amber-300 border border-amber-500/40 text-xs font-extrabold flex items-center gap-1.5 cursor-pointer transition-all"
+                >
+                  {copiedKey === 'ownerPhone' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  <span>{copiedKey === 'ownerPhone' ? 'Copied!' : 'Copy'}</span>
+                </button>
+              </div>
+
               {/* Buy Goods Till Number */}
               <div className="p-4 rounded-2xl bg-[#111c14] border border-[#223727] flex items-center justify-between gap-4">
                 <div>
                   <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400">
-                    Option A (Recommended)
+                    Option B: Buy Goods (Till)
                   </span>
-                  <h4 className="text-sm font-extrabold text-white">M-Pesa Buy Goods & Services (Till)</h4>
-                  <p className="text-2xl font-black text-amber-400 tracking-wider mt-1 font-mono">
+                  <h4 className="text-sm font-extrabold text-white">M-Pesa Buy Goods Till</h4>
+                  <p className="text-2xl font-black text-emerald-400 tracking-wider mt-1 font-mono">
                     {STUDIO_INFO.mpesaTill}
                   </p>
                   <p className="text-[11px] text-stone-400 mt-0.5">
-                    Store: Crochet City Dreadlocks (P The dread genius)
+                    Store: Crochet City Dreadlocks
                   </p>
                 </div>
 
@@ -392,48 +593,19 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
                 </button>
               </div>
 
-              {/* Paybill Option */}
-              <div className="p-4 rounded-2xl bg-[#111c14] border border-[#223727] flex items-center justify-between gap-4">
+              {/* Founder Phone Number */}
+              <div className="p-3.5 rounded-xl bg-[#0e1611] border border-[#1b2b1e] flex items-center justify-between gap-3 text-xs">
                 <div>
-                  <span className="text-[10px] uppercase font-bold tracking-wider text-amber-400">
-                    Option B: Paybill
-                  </span>
-                  <h4 className="text-sm font-extrabold text-white">M-Pesa Paybill Number</h4>
-                  <div className="flex items-center gap-3 mt-1">
-                    <div>
-                      <span className="text-xs text-stone-400">Business No:</span>
-                      <p className="text-lg font-black text-white font-mono">{STUDIO_INFO.mpesaPaybill}</p>
-                    </div>
-                    <div>
-                      <span className="text-xs text-stone-400">Account No:</span>
-                      <p className="text-lg font-black text-amber-400 font-mono">{STUDIO_INFO.mpesaAccount}</p>
-                    </div>
-                  </div>
+                  <span className="text-[10px] uppercase text-stone-400">Founder Tech Support & Commission:</span>
+                  <p className="font-mono font-bold text-stone-200">{COMMISSION_CONFIG.founderMpesa}</p>
                 </div>
-
                 <button
-                  id="copy-paybill-btn"
-                  onClick={() => handleCopy(`${STUDIO_INFO.mpesaPaybill} Acc: ${STUDIO_INFO.mpesaAccount}`, 'paybill')}
-                  className="px-4 py-2.5 rounded-xl bg-amber-500/20 hover:bg-amber-500 hover:text-stone-950 text-amber-300 border border-amber-500/40 text-xs font-extrabold flex items-center gap-1.5 cursor-pointer transition-all"
+                  id="copy-founder-phone-btn"
+                  onClick={() => handleCopy(COMMISSION_CONFIG.founderMpesa, 'founderPhone')}
+                  className="px-3 py-1.5 rounded-lg bg-[#152217] text-stone-300 hover:text-white text-[11px] font-bold border border-stone-700"
                 >
-                  {copiedKey === 'paybill' ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                  <span>{copiedKey === 'paybill' ? 'Copied!' : 'Copy Paybill'}</span>
+                  {copiedKey === 'founderPhone' ? 'Copied!' : 'Copy Founder No.'}
                 </button>
-              </div>
-
-              {/* Step-by-step instructions */}
-              <div className="p-3.5 rounded-xl bg-[#0e1611] border border-[#1b2b1e] text-xs text-stone-300 space-y-1.5">
-                <p className="font-bold text-white flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-amber-400" />
-                  How to pay via M-Pesa SIM Tool / M-Pesa App:
-                </p>
-                <ol className="list-decimal list-inside space-y-1 text-stone-400 pl-1">
-                  <li>Go to Lipa na M-PESA &gt; Buy Goods and Services</li>
-                  <li>Enter Till Number: <strong className="text-white">{STUDIO_INFO.mpesaTill}</strong></li>
-                  <li>Enter Amount (e.g. Deposit KSh 500 or full service cost)</li>
-                  <li>Enter your Secret M-PESA PIN & press send</li>
-                  <li>Paste the confirmation code in the &quot;Verify Code&quot; tab to instantly link your appointment.</li>
-                </ol>
               </div>
             </div>
           )}
@@ -489,6 +661,66 @@ export const MpesaPaymentModal: React.FC<MpesaPaymentModalProps> = ({
                   </button>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* TAB 5: REGISTRATION & COSTS FAQ */}
+          {activeTab === 'costs' && (
+            <div className="space-y-4 animate-in fade-in duration-150">
+              {/* Question 1: Will current M-Pesa work without registration? */}
+              <div className="p-4 rounded-2xl bg-[#131d16] border border-emerald-500/40 space-y-2.5">
+                <div className="flex items-center gap-2 text-emerald-300 font-extrabold text-sm">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                  <h4>Will current M-Pesa work without registration?</h4>
+                </div>
+                <p className="text-xs text-stone-200 leading-relaxed">
+                  <strong className="text-emerald-400 underline">YES! Direct client payments work 100% right now with ZERO registration.</strong>
+                </p>
+                <div className="space-y-2 text-xs text-stone-300">
+                  <div className="p-2.5 rounded-xl bg-black/50 border border-emerald-900/50 flex items-start gap-2">
+                    <span className="text-amber-400 font-bold">1.</span>
+                    <div>
+                      <strong className="text-white">Manual Send Money & Till:</strong> Clients can open M-Pesa on their phone and send directly to 
+                      <span className="text-amber-300 font-mono font-bold"> 0748805190</span> (P The Dread Genius) or Till 
+                      <span className="text-amber-300 font-mono font-bold"> 894210</span>. The funds land immediately in the salon owner's M-Pesa balance.
+                    </div>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-black/50 border border-emerald-900/50 flex items-start gap-2">
+                    <span className="text-amber-400 font-bold">2.</span>
+                    <div>
+                      <strong className="text-white">Automatic Phone PIN Pop-Up (STK Push):</strong> To make the prompt pop up automatically on the client's screen asking for their M-Pesa PIN, Safaricom requires linking your till on 
+                      <span className="text-emerald-300 font-mono"> developer.safaricom.co.ke</span>. In the app right now, STK push operates with simulated testing until your Daraja keys are plugged in.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Question 2: How much will it cost? */}
+              <div className="p-4 rounded-2xl bg-[#18150c] border border-amber-500/40 space-y-3">
+                <div className="flex items-center gap-2 text-amber-300 font-extrabold text-sm">
+                  <CreditCard className="w-5 h-5 text-amber-400 shrink-0" />
+                  <h4>How much will Safaricom registration cost?</h4>
+                </div>
+                
+                <div className="p-3 rounded-xl bg-amber-950/60 border border-amber-600/40 text-xs space-y-1">
+                  <div className="flex items-center justify-between text-sm font-black text-amber-200">
+                    <span>Total Upfront Setup & Registration Cost:</span>
+                    <span className="text-emerald-400 font-mono text-base">KSh 0.00 (100% FREE)</span>
+                  </div>
+                  <p className="text-[11px] text-stone-300">
+                    Safaricom does <strong className="text-white">NOT</strong> charge any money to sign up, apply for a Till number, or create an API developer account on the Daraja portal.
+                  </p>
+                </div>
+
+                <div className="space-y-1.5 text-xs text-stone-300">
+                  <h5 className="font-bold text-white uppercase text-[11px] tracking-wider">Per-Transaction Fees (Only deducted when money arrives):</h5>
+                  <ul className="space-y-1 text-[11px] text-stone-300 list-disc list-inside">
+                    <li><strong className="text-stone-100">Customer Payment Fee:</strong> Free (KSh 0.00) when paying via Buy Goods Till.</li>
+                    <li><strong className="text-stone-100">Merchant Till Receiving Fee:</strong> Under KSh 200 is <strong>0% free</strong>. Above KSh 200 is only <strong>0.5%</strong> (capped at max KSh 200).</li>
+                    <li><strong className="text-stone-100">Automated 10% Founder Split Disbursal:</strong> Safaricom standard B2C fee is approximately <strong>KSh 15 - 22</strong> per split payout. (Or KSh 0 if settled in weekly batches!).</li>
+                  </ul>
+                </div>
+              </div>
             </div>
           )}
         </div>

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MessageSquare, Send, X, Phone, Clock, Sparkles, CheckCircle2, ChevronRight, HelpCircle, Camera } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { MessageSquare, Send, X, Phone, Clock, Sparkles, CheckCircle2, ChevronRight, HelpCircle, Camera, ArrowUp } from 'lucide-react';
 import { STUDIO_INFO } from '../data/crochetData';
 
 interface ChatWithPFloatingProps {
@@ -41,6 +41,15 @@ export const ChatWithPFloating: React.FC<ChatWithPFloatingProps> = ({ onOpenBook
   const [showPromptBadge, setShowPromptBadge] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState(PRESET_INQUIRIES[0].message);
   const [customText, setCustomText] = useState('');
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 350);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const activeMessage = customText.trim() ? customText : selectedMessage;
   const whatsappUrl = `https://wa.me/${STUDIO_INFO.whatsapp}?text=${encodeURIComponent(activeMessage)}`;
@@ -251,6 +260,22 @@ export const ChatWithPFloating: React.FC<ChatWithPFloatingProps> = ({ onOpenBook
             </div>
           </div>
         </div>
+      )}
+
+      {/* Unified Floating Scroll-to-Top Button - appears cleanly when scrolled */}
+      {showScrollTop && (
+        <button
+          id="unified-scroll-to-top-btn"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          className="mb-2.5 px-3 py-2 rounded-full bg-[#0d1711]/95 hover:bg-[#152a1e] text-amber-400 hover:text-amber-300 border border-emerald-500/40 hover:border-amber-400 shadow-xl shadow-black/80 flex items-center gap-1.5 transition-all cursor-pointer group active:scale-95 backdrop-blur-md self-end animate-in fade-in slide-in-from-bottom-2 duration-200"
+          title="Scroll back to top"
+          aria-label="Scroll back to top"
+        >
+          <ArrowUp className="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform text-amber-400" />
+          <span className="text-[11px] font-bold uppercase tracking-wider text-stone-200 group-hover:text-white">
+            Top
+          </span>
+        </button>
       )}
 
       {/* Main Floating Button Row with Dismiss Control */}

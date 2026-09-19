@@ -288,7 +288,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
             <button
               type="submit"
               id="confirm-booking-btn"
-              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 font-bold text-xs flex items-center justify-center gap-2 shadow-sm cursor-pointer transition-all active:scale-95"
+              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-500 via-amber-400 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-stone-950 font-bold text-xs flex items-center justify-center gap-2 shadow-sm cursor-pointer transition-all active:scale-95 rasta-btn-glow"
             >
               <Check className="w-4 h-4 stroke-[2.5]" />
               <span>Confirm Appointment (KSh 500 Deposit)</span>
@@ -346,7 +346,7 @@ export const BookingModal: React.FC<BookingModalProps> = ({
                   onClose();
                   onOpenMpesaPay(500, `Booking ${confirmedBooking?.id} Deposit`);
                 }}
-                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#008751] to-[#059669] hover:from-[#059669] hover:to-[#10b981] text-white text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                className="w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-[#008751] to-[#059669] hover:from-[#059669] hover:to-[#10b981] text-white text-xs font-extrabold uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg cursor-pointer rasta-btn-glow"
               >
                 <CreditCard className="w-4 h-4" />
                 <span>Pay KSh 500 Deposit Now (Instant M-Pesa STK)</span>
